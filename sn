@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego Snake</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            margin: 0;
+            color: #333;
+            flex-direction: column;
+        }
+        #gameContainer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        #scoreBoard {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        #gameCanvas {
+            background-color: #222;
+            border: 1px solid #ddd;
+        }
+        #winMessage {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+            color: #4CAF50;
+        }
+        #winMessage a {
+            color: #ff69b4;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        #winMessage a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div id="gameContainer">
+        
+        <div id="scoreBoard">
+            <span>Puntuación actual: <span id="currentScore">0</span></span> | Puntuación máxima: 15
+        </div>
+        
+        
+        <canvas id="gameCanvas" width="400" height="400"></canvas>
+        
+        
+        <div id="winMessage">
+            <h2>¡Felicidades! Acabas de ganar!!!</h2>
+            <a href="declaracion.html" target="_blank">Clickame :))</a>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+        const boxSize = 20; 
+        const rows = canvas.height / boxSize;
+        const cols = canvas.width / boxSize;
+        let snake = [{ x: 5 * boxSize, y: 5 * boxSize }];
+        let direction = "RIGHT";
+        let food = {
+            x: Math.floor(Math.random() * cols) * boxSize,
+            y: Math.floor(Math.random() * rows) * boxSize
+        };
+        let score = 0;
+        const maxScore = 15; 
+        const currentScoreDisplay = document.getElementById("currentScore");
+
+        
+        document.addEventListener("keydown", changeDirection);
+        function changeDirection(event) {
+            if (event.key === "ArrowUp" && direction !== "DOWN") direction = "UP";
+            else if (event.key === "ArrowDown" && direction !== "UP") direction = "DOWN";
+            else if (event.key === "ArrowLeft" && direction !== "RIGHT") direction = "LEFT";
+            else if (event.key === "ArrowRight" && direction !== "LEFT") direction = "RIGHT";
+        }
+
+        
+        function updateGame() {
+            
+            const head = { x: snake[0].x, y: snake[0].y };
+
+            
+            if (direction === "UP") head.y -= boxSize;
+            if (direction === "DOWN") head.y += boxSize;
+            if (direction === "LEFT") head.x -= boxSize;
+            if (direction === "RIGHT") head.x += boxSize;
+
+            
+            if (head.x === food.x && head.y === food.y) {
+                score++;
+                currentScoreDisplay.textContent = score; 
+                food = {
+                    x: Math.floor(Math.random() * cols) * boxSize,
+                    y: Math.floor(Math.random() * rows) * boxSize
+                };
+            } else {
+                
+                snake.pop();
+            }
+
+            
+            snake.unshift(head);
+
+        
+            if (head.x < 0 || head.x >= canvas.width || head.y < 0 || head.y >= canvas.height ||
+                snake.slice(1).some(segment => segment.x === head.x && segment.y === head.y)) {
+                clearInterval(game);
+                alert("¡Perdiste! Intenta de nuevo.");
+                document.location.reload();
+            }
+
+        
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        
+            snake.forEach(segment => {
+                ctx.fillStyle = "lightgreen";
+                ctx.fillRect(segment.x, segment.y, boxSize, boxSize);
+                ctx.strokeStyle = "darkgreen";
+                ctx.strokeRect(segment.x, segment.y, boxSize, boxSize);
+            });
+
+        
+            ctx.fillStyle = "red";
+            ctx.fillRect(food.x, food.y, boxSize, boxSize);
+
+            
+            if (score >= maxScore) {
+                clearInterval(game);
+                document.getElementById("winMessage").style.display = "block";
+            }
+        }
+
+        
+        const game = setInterval(updateGame, 200); 
+    </script>
+</body>
+</html>
+
