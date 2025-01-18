@@ -59,7 +59,7 @@
         
         <div id="winMessage">
             <h2>¡Felicidades! Acabas de ganar!!!</h2>
-            <a href="declaracion.html" target="_blank">Clickame :))</a>
+            <a href="declaracion.html" target="_blank">Reclamar recompensa :))</a>
         </div>
     </div>
 
@@ -119,7 +119,7 @@
             if (head.x < 0 || head.x >= canvas.width || head.y < 0 || head.y >= canvas.height ||
                 snake.slice(1).some(segment => segment.x === head.x && segment.y === head.y)) {
                 clearInterval(game);
-                alert("¡Perdiste! Intenta de nuevo.");
+                alert("Perdiste! Intenta de nuevo.");
                 document.location.reload();
             }
 
